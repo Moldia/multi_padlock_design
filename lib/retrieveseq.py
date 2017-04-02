@@ -1,4 +1,5 @@
 # retrieve sequence if not given for probe design
+# for multi_padlock_design
 # Xiaoyan, 2016-8-4
 
 
