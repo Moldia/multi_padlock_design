@@ -40,8 +40,13 @@ def readmsa(alnfile):
     # get the gi/MN # of the first sequence in alignment
     colexclude = alnresult[0].split(' ').count('') + len(alnresult[0].split(' ')[0]) + 1
     name = alnresult[0][:colexclude]
-    name = name.split('|')
-    name = name[1]      # take only NM or gi number
+    if '|' in name:
+        name = name.split('|')
+        name = name[1]      # take only NM or gi number
+    else:
+        name = name.split(' ')
+        name = name[1][1:]
+
     alnresult = [line[colexclude:].rstrip('\n') for line in alnresult]
 
     # combine multiple lines of alignment results from the first sequence

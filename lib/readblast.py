@@ -19,13 +19,19 @@ def readblastout(file, armlength):
         for line in fh:
             if specific:
                 scores = []
-                columns = line.split('|')
-                if len(columns) <= 3:
-                    if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':    # check if the hit is transcript (NM) or non-coding RNA (NR), remove all predicted (XM)
-                        scores = columns[-1].split(',')
+                if '|' in line:
+                    columns = line.split('|')
+                    if len(columns) <= 3:
+                        if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':    # check if the hit is transcript (NM) or non-coding RNA (NR), remove all predicted (XM)
+                            scores = columns[-1].split(',')
+                    else:
+                        if columns[3][:2] == 'NM' or columns[3][:2] == 'NR':
+                            scores = columns[-1].split(',')
                 else:
-                    if columns[3][:2] == 'NM' or columns[3][:2] == 'NR':
-                        scores = columns[-1].split(',')
+                    columns = line.split(',')
+                    if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':
+                        scores = columns[2:]
+
                 if len(scores):
                     if 2*armlength*.5 < int(scores[2]) < 2*armlength and float(scores[1]) > 80 and int(scores[5]) < armlength-4 and int(scores[6] > armlength+5):
                         # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5

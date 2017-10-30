@@ -3,25 +3,45 @@
 
 import os
 import config
+import gzip
 
 
-def fastadb(indir, filenum, form, name):
-    """ Read multiple fasta files of a database, prepare acronyms (NCBI only), and format database for blast"""
+def fastadb(indir, filenum, filename, name):
+    """ Read multiple fasta files of a database, prepare acronyms (NCBI only), and format database for blast """
     # read original .fna files
     Headers = []
     Seq = []
     seq = str()
+
     for i in range(filenum):
         digit = str(i+1)
-        with open(os.path.join(indir, form[0] + digit + form[1]), 'r') as f:
+
+        if filename[1][-2:] == 'gz':
+            # read zipped files directly
+            f = gzip.open(os.path.join(indir, filename[0] + digit + filename[1]), 'rb')
+            fcontent = f.read()
+            f.close()
+
+            # write decompressed file
+            f2 = open(os.path.join(indir, filename[0] + digit + filename[1][:-2]), 'wb')
+            f2.write(fcontent)
+            f2.close()
+
+            # delete compressed file
+            os.remove(os.path.join(indir, filename[0] + digit + filename[1]))
+
+        with open(os.path.join(indir, filename[0] + digit + filename[1].replace('.gz', '')), 'r') as f:
+            print digit
+
             for line in f:
                 line = line.rstrip('\n')
-                if line[0] == '>':
+                if line[0] == '>':      # a new sequence
                     Seq.append([seq])
                     Headers.append(line)
                     seq = str()
                 else:
                     seq += line
+
     Seq.append(seq)    # the last sequence
     del Seq[0]      # delete first empty element due to appending only
 
@@ -45,7 +65,7 @@ def fastadb(indir, filenum, form, name):
                     del Headers[c]
                     del Seq[c]
         else:
-            if not (Headers[c][:2] == 'NM' or Headers[c][:2] == 'NR'):      # new NCBI single fasta file format
+            if not (Headers[c][1:3] == 'NM' or Headers[c][1:3] == 'NR'):      # new NCBI single fasta file format
                 del Headers[c]
                 del Seq[c]
 
@@ -90,10 +110,11 @@ def blastdb(species):
             for i in range(nfiles[s]):
                 digit = str(i + 1)
                 txtcmd = ' '.join(('makeblastdb -in',
-                                      os.path.join(fastadir[s], filename[s][0] + digit + filename[s][1]),
+                                      os.path.join(fastadir[s],
+                                                   filename[s][0] + digit + filename[s][1].replace('.gz', '')),
                                       '-dbtype nucl'))
                 os.system(txtcmd)
-                alldb.append(os.path.join(fastadir[s], filename[s][0] + digit + filename[s][1]))
+                alldb.append(os.path.join(fastadir[s], filename[s][0] + digit + filename[s][1]).replace('.gz', ''))
 
             # aggregate databases
             alldb = ' '.join(tuple(alldb))
