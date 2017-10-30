@@ -1,3 +1,6 @@
+# padlock design pipeline for multiplexed assay with multiple probes per target in cDNA-based expression profiling
+# Xiaoyan, 2017
+
 from lib import checkinput
 from lib import screenseq
 from lib import formatrefseq

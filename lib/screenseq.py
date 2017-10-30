@@ -1,4 +1,4 @@
-# for padlock_design
+# for multi_padlock_design
 # Xiaoyan, 2017
 
 

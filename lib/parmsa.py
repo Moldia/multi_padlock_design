@@ -1,5 +1,5 @@
 # run parallel multiple sequence alignment (ClustalW) to find common sequences of transcript variants
-# for probe design
+# for multi_padlock_design
 # Xiaoyan, 2016-8-4
 
 
@@ -33,12 +33,12 @@ def readmsa(alnfile):
             elif line == '\n':
                 if nvars == 0 and row > 2:
                     nvars = row
-                    nvars -= 4
+                    nvars -= 4  # first three rows are always dummy rows, and the last row before empty new line is the alignment line
             else:
                 alnresult.append(line)
 
     # get the gi/MN # of the first sequence in alignment
-    colexclude = alnresult[0].split(' ').count('') + len(alnresult[0].split(' ')[0]) + 1
+    colexclude = alnresult[0].split(' ').count('') + len(alnresult[0].split(' ')[0]) + 1    # columns to exclude
     name = alnresult[0][:colexclude]
     if '|' in name:
         name = name.split('|')
