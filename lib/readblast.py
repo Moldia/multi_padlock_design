@@ -27,18 +27,23 @@ def readblastout(file, armlength):
                     else:
                         if columns[3][:2] == 'NM' or columns[3][:2] == 'NR':
                             scores = columns[-1].split(',')
+
                 else:
                     columns = line.split(',')
                     if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':
                         scores = columns[2:]
 
                 if len(scores):
-                    if 2*armlength*.5 < int(scores[2]) < 2*armlength and float(scores[1]) > 80 and int(scores[5]) < armlength-4 and int(scores[6] > armlength+5):
+                    # remove the first empty column (somehow appears in some db and blast versions)
+                    if '' in scores:
+                        scores.remove('')
+
+                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5] > armlength+5):
                         # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
                         specific = False
 
                     if not mappable:
-                        if float(scores[1]) == 100 and int(scores[2]) == 2*armlength:
+                        if float(scores[0]) == 100 and int(scores[1]) == 2*armlength:
                             mappable = True
         if not mappable:
             with open(file[0:-10] + '.fasta', 'r') as f:
