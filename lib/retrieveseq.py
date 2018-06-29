@@ -97,7 +97,7 @@ def findseq(genes, hits, dirname):
     # run multiple sequence alignment if more than one variants are found for one gene
     if len(msa):
         tempout = parmsa.continuemsa(dirname, msa)
-        print "MSA finished."
+        print ("MSA finished.")
         for c, name in enumerate(tempout[0]):
             tempheader = headersMSA[c]
             temp = [i for i in tempheader if name in i]     # first sequence in ClustalW output

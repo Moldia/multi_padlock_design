@@ -8,9 +8,9 @@ import numpy as np
 def usetime():
     """ Use current time to create temporary folder"""
     t = str(datetime.datetime.now())[:19]
-    t = t.translate(None, '-')
-    t = t.translate(None, ':')
-    t = t.translate(None, ' ')
+    t = t.translate(t.maketrans('','','-'))
+    t = t.translate(t.maketrans('','',':'))
+    t = t.translate(t.maketrans('','',' '))
     return t
 
 
@@ -26,13 +26,13 @@ def tempdir(outdir):
 def blastinfilename(dirname, filename):
     toavoid = [':', '/', '\\', '[', ']', '?', '"', ' ', '<', '>']
     for i in toavoid:
-        filename = filename.translate(None, i)
+        filename = filename.translate(str.maketrans('', '', i))
 
     try:
         filenamefrag = filename.split('|')
         filename = os.path.join(dirname, filenamefrag[3] + filenamefrag[4] + '_target')  # access number and name
     except:
-        filename = filename.translate(None, '|')
+        filename = filename.translate(str.maketrans('', '', '|'))
         filename = os.path.join(dirname, filename + '_target')  # first 20 characters
     return filename
 

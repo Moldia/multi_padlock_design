@@ -31,7 +31,7 @@ def fastadb(indir, filenum, filename, name):
             os.remove(os.path.join(indir, filename[0] + digit + filename[1]))
 
         with open(os.path.join(indir, filename[0] + digit + filename[1].replace('.gz', '')), 'r') as f:
-            print digit
+            print (digit)
 
             for line in f:
                 line = line.rstrip('\n')

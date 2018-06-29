@@ -2,7 +2,7 @@
 # Xiaoyan, 2017
 
 import os
-import createoutput
+from lib import createoutput
 import numpy as np
 
 notmapped = []

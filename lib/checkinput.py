@@ -2,9 +2,9 @@
 # Xiaoyan, 2017
 
 import os
-import readfastafile
-import retrieveseq
-import createoutput
+from lib import readfastafile
+from lib import retrieveseq
+from lib import createoutput
 
 
 def correctinput(string):
@@ -45,7 +45,7 @@ def readseqfile():
     """ Import sequences when gene list is not available """
     success_f = False
     while not success_f:  # get input sequences if it is given instead of gene acronyms
-        seqfile = raw_input("File containing target sequences in FASTA format: ")
+        seqfile = input("File containing target sequences in FASTA format: ")
         seqfile = correctinput(seqfile)
         success_f, headers, sequences = readfastafile.readfasta(seqfile)
         headers_wpos = []
@@ -118,13 +118,13 @@ def getdesigninput():
 
     # loop until all the keyboard inputs are correct
     while not success_s:
-        species = raw_input("Specify the species (human or mouse): ").lower()
+        species = input("Specify the species (human or mouse): ").lower()
         success_s = checkspecies(species)
 
 # if species in (["human", "mouse"]):
     # when human or mouse, possible to load only gene list
     while not success_g:
-        genefile = raw_input("File containing gene acronyms (text/csv file with one gene per row, or with linker sequences).\n"
+        genefile = input("File containing gene acronyms (text/csv file with one gene per row, or with linker sequences).\n"
                              "Just press Enter if input sequences can be provided:\n")
         if len(genefile):
             genefile = correctinput(genefile)
@@ -154,7 +154,7 @@ def getdesigninput():
 #     linkers = []
 
     while not success_d:
-        outdir = raw_input("Output directory: ")
+        outdir = input("Output directory: ")
         outdir = correctinput(outdir)
         if outdir.find(' ') > -1:
             print("No whitespace allowed in the directory path!")
@@ -167,20 +167,20 @@ def getdesigninput():
     os.mkdir(outdir_temp)
 
     while not success_a:
-        armlen = raw_input("Length of one padlock arm (nt): ")
+        armlen = input("Length of one padlock arm (nt): ")
         success_a = armlength(int(armlen))
 
     while not success_i:
-        interval = raw_input("The minimum number of nucleotides between targets: ")
+        interval = input("The minimum number of nucleotides between targets: ")
         success_i = spacing(int(interval))
 
     while not success_t:
-        t1 = raw_input("The lower threshold for target Tm\n"
+        t1 = input("The lower threshold for target Tm\n"
                        "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): ")
         temp = tmthreshold(int(t1), 0)
         if temp:
             while not success_t:
-                t2 = raw_input("The upper threshold for target Tm\n"
+                t2 = input("The upper threshold for target Tm\n"
                                "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): ")
                 success_t = tmthreshold(int(t2), int(t1))
 
