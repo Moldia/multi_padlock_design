@@ -49,9 +49,9 @@ if __name__ == "__main__":
         print("All finished!")
     except:
         import sys
-        print sys.exc_info()[0]
+        print (sys.exc_info()[0])
         import traceback
-        print traceback.format_exc()
+        print (traceback.format_exc())
     finally:
         print("Press Enter to continue ...")
-        raw_input()
+        input()
