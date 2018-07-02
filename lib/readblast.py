@@ -53,6 +53,8 @@ def readblastout(file, armlength):
                 funmap.write('Could not map sequence in ' + file[:-10] + '!\n')
                 funmap.write(seq[1])
                 notmapped.append(int(file[:-10].split('_')[-1])-1)
+
+    # if no blast results returned, ignore the sequence (can be due to error in blast+ or due to no similar sequence)
     if noblast:
         specific = False
 
