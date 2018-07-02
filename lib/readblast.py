@@ -16,7 +16,9 @@ def readblastout(file, armlength):
     specific = True
     mappable = False
     with open(file, 'r') as fh:
+        noblast = True
         for line in fh:
+            noblast = False
             if specific:
                 scores = []
                 if '|' in line:
@@ -51,6 +53,9 @@ def readblastout(file, armlength):
                 funmap.write('Could not map sequence in ' + file[:-10] + '!\n')
                 funmap.write(seq[1])
                 notmapped.append(int(file[:-10].split('_')[-1])-1)
+    if noblast:
+        specific = False
+
     return specific
 
 
