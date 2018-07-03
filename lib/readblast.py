@@ -40,7 +40,7 @@ def readblastout(file, armlength):
                     if '' in scores:
                         scores.remove('')
 
-                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5] > armlength+5):
+                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5]) > armlength+5:
                         # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
                         specific = False
 
