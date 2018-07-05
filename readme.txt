@@ -1,11 +1,11 @@
 This is a padlock design pipeline for multiplexed assay with multiple probes per target in cDNA-based expression profiling
 Mats Nilsson Lab, Stockholm University
-Xiaoyan, 2017
+Xiaoyan, 2018
 
 How to install and run:
 Install blast+, add to path
 Install clustalW, add to path
-Install Python 2, add to path
+Install Python 3 (Python 2 works too, but not recommended), add to path
 Add folder Scripts in Python installation folder to path
 Open command window, type: pip install numpy
 From ftp.ncbi.nlm.nih.gov download refseq mouse and human mRNA sequences
