@@ -16,7 +16,9 @@ def readblastout(file, armlength):
     specific = True
     mappable = False
     with open(file, 'r') as fh:
+        noblast = True
         for line in fh:
+            noblast = False
             if specific:
                 scores = []
                 if '|' in line:
@@ -38,7 +40,7 @@ def readblastout(file, armlength):
                     if '' in scores:
                         scores.remove('')
 
-                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5] > armlength+5):
+                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5]) > armlength+5:
                         # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
                         specific = False
 
@@ -51,6 +53,11 @@ def readblastout(file, armlength):
                 funmap.write('Could not map sequence in ' + file[:-10] + '!\n')
                 funmap.write(seq[1])
                 notmapped.append(int(file[:-10].split('_')[-1])-1)
+
+    # if no blast results returned, ignore the sequence (can be due to error in blast+ or due to no similar sequence)
+    if noblast:
+        specific = False
+
     return specific
 
 
