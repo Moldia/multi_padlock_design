@@ -36,6 +36,9 @@ if __name__ == "__main__":
         targets, targetpos, notMapped, Tm = finalizeprobes.correctpos(
             designinput[0], targets, targetpos, notMapped, mapTmlist, Tm, siteChopped)
 
+        # write genes with no candidates
+        createoutput.emptyentries(targets, genepars[2], outpars)
+
         # fill up linker sequence and write
         probes = finalizeprobes.assembleprobes(targets, genepars, designpars[1])
         createoutput.writeprobefile(

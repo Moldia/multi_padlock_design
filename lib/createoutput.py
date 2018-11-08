@@ -70,3 +70,16 @@ def writeprobefile(headers, probes, Tm, targetpos, targets, dirnames, armlength,
                            probes[i][j]))
             f.write("\n")
 
+
+def emptyentries(targets, headers, dirnames):
+    """ Write genes with no candidate at all to log file """
+    t = dirnames[1].split('TempFolder')[1]
+    nocandidate = []
+    for i in range(len(targets)):
+        if not targets[i]:
+            nocandidate.append(i)
+    if len(nocandidate):
+        with open(os.path.join(dirnames[0], 'log_' + t + '.txt'), 'a') as f:
+            f.write('%d Gene(s) have no probe candidates:\n'% len(nocandidate))
+            for i in nocandidate:
+                f.write('%s\n' % headers[i])

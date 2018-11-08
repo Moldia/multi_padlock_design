@@ -247,7 +247,7 @@ def getdesigninput():
         f.write("Output directory: %s\n" % outdir)
         f.write("Padlock arm length: %s nt\n" % armlen)
         f.write("Space between targets: %s nt\n" % interval)
-        f.write("Number of probes per gene: %s\n" % nprobes)
+        f.write("Number of probes per gene: %s\n" % n)
         if not success_f:
             f.write("Input file: %s\n" % genefile)
             f.write("Unique gene acronyms found: %d\n" % len(genes))

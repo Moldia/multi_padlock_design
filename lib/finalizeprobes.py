@@ -95,6 +95,7 @@ def selectprobes(n, finals, headers):
     for i, header in enumerate(headers):
         if len(targets[i]) > n:
             deletei = random.sample(range(0, len(targets[i])), len(targets[i])-n)
+            deletei.sort(reverse=True)
             for j in deletei:
                 del targets[i][j]
                 del Tm[i][j]

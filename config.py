@@ -5,8 +5,8 @@ max_MSA_processes = 6
 max_Blast_processes = 6
 
 # mouse database
-fastadir_mouse = r'E:\Probes\transcriptomedb\M_musculus'
-fasta_filenum_mouse = 4
+fastadir_mouse = r'E:\ProbeDesign\RefSeqDatabase'
+fasta_filenum_mouse = 2
 fasta_pre_suffix_mouose = ('mouse.', '.rna.fna.gz')
 
 # human database
