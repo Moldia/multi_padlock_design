@@ -1,5 +1,5 @@
 # for multi_padlock_design
-# Xiaoyan, 2017
+# Xiaoyan, 2018
 
 import os
 from lib import readfastafile
@@ -64,10 +64,10 @@ def makeoutputdir(outdir):
         os.mkdir(outdir)
         success = True
     except WindowsError as e:
-        if str(e).split(']')[0] == '[Error 183':    # already existing
+        if 'Error 183' in str(e):    # already existing
             print("Directory already existing.")
             success = True
-        elif str(e).split(']')[0] == '[Error 3':    # directory does not exist
+        elif 'Error 3' in str(e):    # directory does not exist
             try:
                 os.makedirs(outdir)     # create subdirectories
                 success = True
@@ -106,6 +106,16 @@ def tmthreshold(t1, extreme):
     return success
 
 
+def nprobes(n):
+    """ Fixed number of probes per gene """
+    success = False
+    if not n >= 1:
+        print("Fixed number of probes per gene must be at least 1. Try again.")
+    else:
+        success = True
+    return success
+
+
 def getdesigninput():
     """ Check all keyboard inputs and format target sequences """
     success_s = False  # species
@@ -115,6 +125,7 @@ def getdesigninput():
     success_a = False  # arm length
     success_i = False  # interval between targets
     success_t = False  # Tm threshold
+    success_n = False  # fixed number of output sequences
 
     # loop until all the keyboard inputs are correct
     while not success_s:
@@ -145,7 +156,7 @@ def getdesigninput():
             linkers = []
             for header in headers:
                 for i in toavoid:
-                    header = header.translate(None, i)
+                    header = header.replace(i, '')
                 genes.append(header)
                 linkers.append([])
 # else:
@@ -183,6 +194,14 @@ def getdesigninput():
                 t2 = input("The upper threshold for target Tm\n"
                                "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): ")
                 success_t = tmthreshold(int(t2), int(t1))
+
+    while not success_n:
+        n = input("Number of probes per gene (skip by pressing Enter): ")
+        if (len(n)):
+            success_n = nprobes(int(n))
+        else:
+            success_n = True
+
 
     # find hits if no target sequence is given
     if not success_f:
@@ -228,6 +247,7 @@ def getdesigninput():
         f.write("Output directory: %s\n" % outdir)
         f.write("Padlock arm length: %s nt\n" % armlen)
         f.write("Space between targets: %s nt\n" % interval)
+        f.write("Number of probes per gene: %s\n" % nprobes)
         if not success_f:
             f.write("Input file: %s\n" % genefile)
             f.write("Unique gene acronyms found: %d\n" % len(genes))
@@ -237,7 +257,7 @@ def getdesigninput():
         else:
             f.write("Input file: %s\n" % seqfile)
             f.write("Number of sequences processed from the input file: %d\n" % len(headers))
-    return (species, int(armlen), int(interval), int(t1), int(t2)),\
+    return (species, int(armlen), int(interval), int(t1), int(t2), n),\
            (outdir, outdir_temp), \
            (genes, linkers, headers),\
            (basepos, headers_wpos, sequences)

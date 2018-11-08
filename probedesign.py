@@ -46,7 +46,16 @@ if __name__ == "__main__":
         createoutput.writeprobefile(
             genepars[2], finallist[0], finallist[1], finallist[2], finallist[3],
             outpars, designpars[1], '5.ProbesDBMappable_')
+
+        # randomly select the fixed number of probes per gene (if applicable)
+        if len(designpars[5]):
+            sublist = finalizeprobes.selectprobes(int(designpars[5]), finallist, genepars[2])
+            createoutput.writeprobefile(
+                genepars[2], sublist[0], sublist[1], sublist[2], sublist[3],
+                outpars, designpars[1], '6.ProbesRandomSubsetN=' + designpars[5] + '_')
+
         print("All finished!")
+
     except:
         import sys
         print (sys.exc_info()[0])

@@ -1,6 +1,7 @@
 # for multi_padlock_design
-# Xiaoyan, 2017
+# Xiaoyan, 2018
 
+import random
 
 
 def correctpos(basepos, targets, targetpos, notMapped, mapTmlist, Tm, siteChopped):
@@ -85,3 +86,18 @@ def removeunmapped(notmapped, targetpos, headers, targets, Tm, probes):
     return (probes, Tm, targetpos, targets)
 
 
+def selectprobes(n, finals, headers):
+    probes = finals[0]
+    Tm = finals[1]
+    targetpos = finals[2]
+    targets = finals[3]
+
+    for i, header in enumerate(headers):
+        if len(targets[i]) > n:
+            deletei = random.sample(range(0, len(targets[i])), len(targets[i])-n)
+            for j in deletei:
+                del targets[i][j]
+                del Tm[i][j]
+                del targetpos[i][j]
+                del probes[i][j]
+    return (probes, Tm, targetpos, targets)
