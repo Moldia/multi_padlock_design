@@ -50,7 +50,7 @@ if __name__ == "__main__":
             genepars[2], finallist[0], finallist[1], finallist[2], finallist[3],
             outpars, designpars[1], '5.ProbesDBMappable_')
 
-        # randomly select the fixed number of probes per gene (if applicable)
+        # prioritize sequences without homopolymers and randomly select the fixed number of probes per gene (if applicable)
         if len(designpars[5]):
             sublist = finalizeprobes.selectprobes(int(designpars[5]), finallist, genepars[2])
             createoutput.writeprobefile(

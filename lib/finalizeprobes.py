@@ -87,6 +87,7 @@ def removeunmapped(notmapped, targetpos, headers, targets, Tm, probes):
 
 
 def selectprobes(n, finals, headers):
+    """ Prioritize probes with no homopolymer sequences and choose randomly n candidates """
     probes = finals[0]
     Tm = finals[1]
     targetpos = finals[2]
@@ -94,7 +95,23 @@ def selectprobes(n, finals, headers):
 
     for i, header in enumerate(headers):
         if len(targets[i]) > n:
-            deletei = random.sample(range(0, len(targets[i])), len(targets[i])-n)
+            # probes with homopolymers
+            wAAAA = [c for c, j in enumerate(probes[i]) if "AAAA" in j]
+            wCCCC = [c for c, j in enumerate(probes[i]) if "CCCC" in j]
+            wGGGG = [c for c, j in enumerate(probes[i]) if "GGGG" in j]
+            wTTTT = [c for c, j in enumerate(probes[i]) if "TTTT" in j]
+            wHomo = set(wAAAA + wCCCC + wGGGG + wTTTT)
+
+            # without homopolymers
+            noHomo = list(set(range(0, len(targets[i]))) - wHomo)
+
+            # prioritize sequence without homopolymers
+            if len(noHomo) > n:
+                deletei = random.sample(noHomo, len(noHomo)-n)
+                deletei = deletei + list(wHomo)
+            else:
+                deletei = random.sample(wHomo, len(wHomo)-n+len(noHomo))
+
             deletei.sort(reverse=True)
             for j in deletei:
                 del targets[i][j]
