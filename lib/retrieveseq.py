@@ -77,6 +77,8 @@ def findseq(genes, hits, dirname):
     headers = []
     basepos = []
     msa = []
+    nocommon = []
+
     headersMSA = []
     for c, hit in enumerate(hits):
         if len(hit) == 1:   # only one variant
@@ -106,7 +108,8 @@ def findseq(genes, hits, dirname):
                 basepos.append(tempout[1][c])
                 targets.append(tempout[2][c])
             else:
-                msa[c] = ''
+                nocommon.append(msa[c])
 
-    return headers, basepos, targets, msa
+
+    return headers, basepos, targets, msa, nocommon
 

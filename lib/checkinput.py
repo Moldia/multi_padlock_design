@@ -197,7 +197,7 @@ def getdesigninput():
 
     while not success_n:
         n = input("Number of probes per gene (skip by pressing Enter): ")
-        if (len(n)):
+        if len(n):
             success_n = nprobes(int(n))
         else:
             success_n = True
@@ -219,14 +219,13 @@ def getdesigninput():
                     del hits[i]
 
         # find sequences (MSA included if multiple variants)
-        headers, basepos, sequences, msa = retrieveseq.findseq(genes, hits, outdir_temp)
+        headers, basepos, sequences, msa, nocommon = retrieveseq.findseq(genes, hits, outdir_temp)
 
         # genes that have no common sequence among all variants
-        nomsa = [i for i in genes if i not in msa]
-        nomsa = [c for c, i in enumerate(genes) if i in nomsa]
-        if len(nomsa):
+        nocommon = [c for c, i in enumerate(genes) if i in nocommon]
+        if len(nocommon):
             with open(os.path.join(outdir, '0.NoConsensusSequence_' + t + '.txt'), 'w') as f:
-                for i in nomsa[::-1]:
+                for i in nocommon[::-1]:
                     f.write("%s\n" % genes[i])
                     del genes[i]  # remove genes that are not found
                     del linkers[i]
@@ -263,12 +262,12 @@ def getdesigninput():
         f.write("Number of probes per gene: %s\n" % n)
         if not success_f:
             f.write("Input file: %s\n" % genefile)
-            f.write("Unique gene acronyms found: %d\n" % len(genes))
+            f.write("Unique gene acronyms found: %d\n" % (len(genes) + len(nocommon)))
             f.write("Number of genes not found in the corresponding database: %d\n" % len(nohit))
             f.write("Number of genes with multiple sequence variants: %d\n"
                     % len(msa))
             f.write("Number of genes with no common sequence after multiple sequence alignment: %d\n"
-                    % len(nomsa))
+                    % len(nocommon))
         else:
             f.write("Input file: %s\n" % seqfile)
             f.write("Number of sequences processed from the input file: %d\n" % len(headers))

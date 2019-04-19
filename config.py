@@ -10,6 +10,6 @@ fasta_filenum_mouse = 2
 fasta_pre_suffix_mouose = ('mouse.', '.rna.fna.gz')
 
 # human database
-fastadir_human = r'E:\ProbeDesign\RefSeqDatabase\human'
+fastadir_human = r'C:\Users\qxyyx\Desktop\probetest\human'
 fasta_filenum_human = 8
 fasta_pre_suffix_human = ('human.', '.rna.fna.gz')
