@@ -42,19 +42,19 @@ if __name__ == "__main__":
         # fill up linker sequence and write
         probes = finalizeprobes.assembleprobes(targets, genepars, designpars[1])
         createoutput.writeprobefile(
-            genepars[2], probes, Tm, targetpos, targets, outpars, designpars[1], '4.NonOverlappingProbes_')
+            genepars[0], genepars[2], probes, Tm, targetpos, targets, outpars, designpars[1], '4.NonOverlappingProbes_')
 
         # remove targets cannot be found in database
         finallist = finalizeprobes.removeunmapped(notMapped, targetpos, genepars[2], targets, Tm, probes)
         createoutput.writeprobefile(
-            genepars[2], finallist[0], finallist[1], finallist[2], finallist[3],
+            genepars[0],genepars[2], finallist[0], finallist[1], finallist[2], finallist[3],
             outpars, designpars[1], '5.ProbesDBMappable_')
 
         # prioritize sequences without homopolymers and randomly select the fixed number of probes per gene (if applicable)
         if len(designpars[5]):
             sublist = finalizeprobes.selectprobes(int(designpars[5]), finallist, genepars[2])
             createoutput.writeprobefile(
-                genepars[2], sublist[0], sublist[1], sublist[2], sublist[3],
+                genepars[0], genepars[2], sublist[0], sublist[1], sublist[2], sublist[3],
                 outpars, designpars[1], '6.ProbesRandomSubsetN=' + designpars[5] + '_')
 
         print("All finished!")

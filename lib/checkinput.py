@@ -220,6 +220,18 @@ def getdesigninput():
 
         # find sequences (MSA included if multiple variants)
         headers, basepos, sequences, msa = retrieveseq.findseq(genes, hits, outdir_temp)
+
+        # genes that have no common sequence among all variants
+        nomsa = [i for i in genes if i not in msa]
+        nomsa = [c for c, i in enumerate(genes) if i in nomsa]
+        if len(nomsa):
+            with open(os.path.join(outdir, '0.NoConsensusSequence_' + t + '.txt'), 'w') as f:
+                for i in nomsa[::-1]:
+                    f.write("%s\n" % genes[i])
+                    del genes[i]  # remove genes that are not found
+                    del linkers[i]
+                    del hits[i]
+
         idxmsa = [c for c, i in enumerate(genes) if i in msa]
         geneorder = [c for c, i in enumerate(genes) if i not in msa]
         [geneorder.append(i) for i in idxmsa]
@@ -247,6 +259,7 @@ def getdesigninput():
         f.write("Output directory: %s\n" % outdir)
         f.write("Padlock arm length: %s nt\n" % armlen)
         f.write("Space between targets: %s nt\n" % interval)
+        f.write("Target Tm range: %d to %d after adjustment\n" % (int(t1), int(t2)))
         f.write("Number of probes per gene: %s\n" % n)
         if not success_f:
             f.write("Input file: %s\n" % genefile)
@@ -254,6 +267,8 @@ def getdesigninput():
             f.write("Number of genes not found in the corresponding database: %d\n" % len(nohit))
             f.write("Number of genes with multiple sequence variants: %d\n"
                     % len(msa))
+            f.write("Number of genes with no common sequence after multiple sequence alignment: %d\n"
+                    % len(nomsa))
         else:
             f.write("Input file: %s\n" % seqfile)
             f.write("Number of sequences processed from the input file: %d\n" % len(headers))

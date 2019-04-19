@@ -55,17 +55,17 @@ def writetargetfile(designinput, sites, Tm, armlength, dirnames, fname):
             f.write("\n")
 
 
-def writeprobefile(headers, probes, Tm, targetpos, targets, dirnames, armlength, fname):
+def writeprobefile(acronym, headers, probes, Tm, targetpos, targets, dirnames, armlength, fname):
     """ Write file with original header, target sequence, Tm and final probe sequence """
     t = dirnames[1].split('TempFolder')[1]
     with open(os.path.join(dirnames[0], fname + t + '.csv'), 'w') as f:
-        f.write("target,Tm,startpos,endpos,padlock\n")
+        f.write("acronym,target,Tm,startpos,endpos,padlock\n")
         for i, header in enumerate(headers):
             f.write("%s\n" % header)
             idxsort = np.argsort(targetpos[i])
             for j in idxsort:
-                f.write("%s,%f,%d,%d,%s\n"
-                        % (targets[i][j], Tm[i][j],
+                f.write("%s,%s,%f,%d,%d,%s\n"
+                        % (acronym[i], targets[i][j], Tm[i][j],
                            targetpos[i][j] + 1, targetpos[i][j] + armlength*2,
                            probes[i][j]))
             f.write("\n")

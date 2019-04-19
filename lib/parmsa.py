@@ -44,8 +44,9 @@ def readmsa(alnfile):
         name = name.split('|')
         name = name[1]      # take only NM or gi number
     else:
-        name = name.split(' ')
-        name = name[1][1:]
+        name = name.replace(' ', '')
+        # name = name.split(' ')
+        # name = name[1][1:]
 
     alnresult = [line[colexclude:].rstrip('\n') for line in alnresult]
 
