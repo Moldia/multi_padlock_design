@@ -9,7 +9,7 @@ notmapped = []
 funmap = []
 
 
-def readblastout(file, armlength):
+def readblastout(file, armlength, variants):
     """ Read the results from blast """
     global funmap
     global notmapped
@@ -20,33 +20,40 @@ def readblastout(file, armlength):
         for line in fh:
             noblast = False
             if specific:
-                scores = []
-                if '|' in line:
-                    columns = line.split('|')
-                    if len(columns) <= 3:
-                        if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':    # check if the hit is transcript (NM) or non-coding RNA (NR), remove all predicted (XM)
+                # scores = []
+                if not ('XR' in line or 'XM' in line):      # skip all predicted transcripts
+                    if '|' in line:
+                        columns = line.split('|')
+                        if len(columns) <= 3:
+                            hit = columns[1].split('.', 1)[0]
+                            # if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':    # check if the hit is transcript (NM) or non-coding RNA (NR), remove all predicted (XM)
                             scores = columns[-1].split(',')
-                    else:
-                        if columns[3][:2] == 'NM' or columns[3][:2] == 'NR':
+                        else:
+                            hit = columns[3].split('.', 1)[0]
+                            # if columns[3][:2] == 'NM' or columns[3][:2] == 'NR':
                             scores = columns[-1].split(',')
 
-                else:
-                    columns = line.split(',')
-                    if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':
+                    else:
+                        columns = line.split(',')
+                        # if columns[1][:2] == 'NM' or columns[1][:2] == 'NR':
+                        hit = columns[1].split('.', 1)[0]
                         scores = columns[2:]
 
-                if len(scores):
-                    # remove the first empty column (somehow appears in some db and blast versions)
-                    if '' in scores:
-                        scores.remove('')
+                    if len(scores):
+                        # remove the first empty column (somehow appears in some db and blast versions)
+                        if '' in scores:
+                            scores.remove('')
 
-                    if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5]) > armlength+5:
-                        # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
-                        specific = False
+                        if 2*armlength*.5 < int(scores[1]) < 2*armlength and float(scores[0]) > 80 and int(scores[4]) < armlength-4 and int(scores[5]) > armlength+5:
+                            # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
+                            specific = False
 
-                    if not mappable:
                         if float(scores[0]) == 100 and int(scores[1]) == 2*armlength:
                             mappable = True
+                            if hit not in variants:
+                                with open(os.path.join(os.path.dirname(file), 'homology.txt'), 'w+') as fsimilar:
+                                    fsimilar.write('%s,%s\n' % (hit, variants[0]))
+                                specific = False
         if not mappable:
             with open(file[0:-10] + '.fasta', 'r') as f:
                 seq = f.readlines()
@@ -61,7 +68,7 @@ def readblastout(file, armlength):
     return specific
 
 
-def getcandidates(listSiteChopped, headers, dirnames, armlength):
+def getcandidates(listSiteChopped, headers, dirnames, armlength, accession):
     """ Get specific fragments """
     global notmapped
     global funmap
@@ -78,7 +85,7 @@ def getcandidates(listSiteChopped, headers, dirnames, armlength):
             blast_bw = []
             for j, target in enumerate(sites):
                 fblast = fname + '_' + str(j + 1) + '_blast.txt'
-                blast_bw.append(readblastout(fblast, armlength))
+                blast_bw.append(readblastout(fblast, armlength, accession[i]))
 
             # find sequences that are specific enough
             idxspecific = np.nonzero(blast_bw)[0]

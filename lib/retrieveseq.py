@@ -80,11 +80,13 @@ def findseq(genes, hits, dirname):
     nocommon = []
 
     headersMSA = []
+    variants = []
     for c, hit in enumerate(hits):
         if len(hit) == 1:   # only one variant
             targets.append(Seq[hit[0]])
             headers.append(Headers[hit[0]])
             basepos.append([0, len(Seq[hit[0]])-1])
+            variants.append(Headers[hit[0]][1:].split('.', 1)[0])
         else:
             msa.append(genes[c])
             tempheader = []
@@ -95,6 +97,7 @@ def findseq(genes, hits, dirname):
                     f.write('%s\n\n' % Seq[multi])
                     tempheader.append(Headers[multi])
             headersMSA.append(tempheader)
+            variants.append([i[1:].split('.', 1)[0] for i in tempheader])
 
     # run multiple sequence alignment if more than one variants are found for one gene
     if len(msa):
@@ -111,5 +114,5 @@ def findseq(genes, hits, dirname):
                 nocommon.append(msa[c])
 
 
-    return headers, basepos, targets, msa, nocommon
+    return headers, basepos, targets, msa, nocommon, variants
 

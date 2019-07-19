@@ -219,7 +219,7 @@ def getdesigninput():
                     del hits[i]
 
         # find sequences (MSA included if multiple variants)
-        headers, basepos, sequences, msa, nocommon = retrieveseq.findseq(genes, hits, outdir_temp)
+        headers, basepos, sequences, msa, nocommon, variants = retrieveseq.findseq(genes, hits, outdir_temp)
 
         # genes that have no common sequence among all variants
         nocommon = [c for c, i in enumerate(genes) if i in nocommon]
@@ -273,7 +273,7 @@ def getdesigninput():
             f.write("Number of sequences processed from the input file: %d\n" % len(headers))
     return (species, int(armlen), int(interval), int(t1), int(t2), n),\
            (outdir, outdir_temp), \
-           (genes, linkers, headers),\
+           (genes, linkers, headers, variants),\
            (basepos, headers_wpos, sequences)
 
 

@@ -26,7 +26,7 @@ if __name__ == "__main__":
         parblast.continueblast(siteChopped, designinput[1], outpars[1], designpars)
 
         # specific targets
-        siteCandidates, notMapped = readblast.getcandidates(siteChopped, designinput[1], outpars, designpars[1])
+        siteCandidates, notMapped = readblast.getcandidates(siteChopped, designinput[1], outpars, designpars[1], genepars[3])
         createoutput.writetargetfile(designinput, siteCandidates, Tm, designpars[1], outpars, '3.AllSpecificTargets_')
 
         # non-overlapping candidates
