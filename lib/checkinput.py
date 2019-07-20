@@ -230,12 +230,23 @@ def getdesigninput():
                     del genes[i]  # remove genes that are not found
                     del linkers[i]
                     del hits[i]
+                    del variants[i]
 
         idxmsa = [c for c, i in enumerate(genes) if i in msa]
         geneorder = [c for c, i in enumerate(genes) if i not in msa]
         [geneorder.append(i) for i in idxmsa]
         linkers = [linkers[i] for i in geneorder]
         genes = [genes[i] for i in geneorder]
+        variants = [variants[i] for i in geneorder]
+
+        # replicates variants so that they match headers_wpos
+        variants_matching_sequence = []
+        for c, i in enumerate(variants):
+            if isinstance(basepos[c][0], int):
+                variants_matching_sequence.append(i)
+            else:
+                for j in range(0, len(basepos[c])):
+                    variants_matching_sequence.append(i)
 
         # write found sequences to output file
         with open(os.path.join(outdir, '1.InputSeq_' + t + '.fasta'), 'w') as f:
@@ -274,7 +285,7 @@ def getdesigninput():
     return (species, int(armlen), int(interval), int(t1), int(t2), n),\
            (outdir, outdir_temp), \
            (genes, linkers, headers, variants),\
-           (basepos, headers_wpos, sequences)
+           (basepos, headers_wpos, sequences, variants_matching_sequence)
 
 
 def checkformat(headers):
