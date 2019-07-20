@@ -154,11 +154,15 @@ def getdesigninput():
             toavoid = [':', '/', '\\', '[', ']', '?', '"', ' ', '<', '>']
             genes = []
             linkers = []
+            variants = []
+            variants_matching_sequence = []
             for header in headers:
                 for i in toavoid:
                     header = header.replace(i, '')
                 genes.append(header)
                 linkers.append([])
+                variants.append([])
+                variants_matching_sequence.appned([])
 # else:
 #     success_f, seqfile, headers, headers_wpos, sequences = readseqfile()
 #     basepos = []

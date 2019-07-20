@@ -50,7 +50,7 @@ def readblastout(file, armlength, variants):
 
                         if float(scores[0]) == 100 and int(scores[1]) == 2*armlength:
                             mappable = True
-                            if hit not in variants:
+                            if len(variants) and hit not in variants:
                                 with open(os.path.join(os.path.dirname(file), 'homology.txt'), 'w+') as fsimilar:
                                     fsimilar.write('%s,%s\n' % (hit, variants[0]))
                                 specific = False
