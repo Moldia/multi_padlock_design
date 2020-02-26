@@ -162,7 +162,7 @@ def getdesigninput():
                 genes.append(header)
                 linkers.append([])
                 variants.append([])
-                variants_matching_sequence.appned([])
+                variants_matching_sequence.append([])
 # else:
 #     success_f, seqfile, headers, headers_wpos, sequences = readseqfile()
 #     basepos = []
