@@ -21,11 +21,11 @@ def readfasta(fastafile):
 
         elif len(headerlines) >= 1:
             for i in range(len(headerlines) - 1):
-                sequences.append(''.join(sequence[headerlines[i]+1:headerlines[i+1]-1]))
+                sequences.append(''.join(sequence[headerlines[i]+1:headerlines[i+1]]))
                 headers.append(sequence[headerlines[i]])
 
             # the last entry (the only one in the case of one sequence in the whole file)
-            sequences.append(''.join(sequence[headerlines[-1] + 1:len(sequence) - 1]))
+            sequences.append(''.join(sequence[headerlines[-1]+1:len(sequence)-1]))
             headers.append(sequence[headerlines[-1]])
             success = True
 
