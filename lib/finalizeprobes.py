@@ -77,7 +77,7 @@ def assembleprobes(targets, genepars, armlength):
 def removeunmapped(notmapped, targetpos, headers, targets, Tm, probes):
     for i, header in enumerate(headers):
         if len(notmapped[i]):
-            for j in list(reversed(range(len(targetpos[i]))))::
+            for j in list(reversed(range(len(targetpos[i])))):
                 if targetpos[i][j] in notmapped[i]:
                     del targets[i][j]
                     del Tm[i][j]
