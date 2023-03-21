@@ -8,15 +8,17 @@ from lib import createoutput
 
 
 def correctinput(string):
-    """ Change from backslash to slash """
-    string = string.encode('unicode-escape').decode()   # un-escape escape characters
-    string = string.replace('\\', '/')  # change every unescaped backslash to slash
-    string = string.replace('//', '/')  # change original double backslash (one for escaping) to one slash
+    """Change from backslash to slash"""
+    string = string.encode("unicode-escape").decode()  # un-escape escape characters
+    string = string.replace("\\", "/")  # change every unescaped backslash to slash
+    string = string.replace(
+        "//", "/"
+    )  # change original double backslash (one for escaping) to one slash
     return string
 
 
 def checkspecies(species):
-    """ Only human and mouse are currently supported """
+    """Only human and mouse are currently supported"""
     success = False
     if not (species in ["mouse", "human"]):
         print("Could not identify species. Try again.")
@@ -26,11 +28,11 @@ def checkspecies(species):
 
 
 def readgenefile(genefile):
-    """ Get the gene list """
+    """Get the gene list"""
     success = False
     try:
-        with open(str(genefile), 'r') as f:
-            lines = [line.rstrip('\n').split(',') for line in f]
+        with open(str(genefile), "r") as f:
+            lines = [line.rstrip("\n").split(",") for line in f]
             genes = [line[0] for line in lines]
             linkers = [line[1:] for line in lines]
             success = True
@@ -42,7 +44,7 @@ def readgenefile(genefile):
 
 
 def readseqfile():
-    """ Import sequences when gene list is not available """
+    """Import sequences when gene list is not available"""
     success_f = False
     while not success_f:  # get input sequences if it is given instead of gene acronyms
         seqfile = input("File containing target sequences in FASTA format: ")
@@ -51,33 +53,33 @@ def readseqfile():
         headers_wpos = []
         basepos = []
         for c, header in enumerate(headers):
-            headers_wpos.append(header + ', 1 to ' + str(len(sequences[c])))
+            headers_wpos.append(header + ", 1 to " + str(len(sequences[c])))
             basepos.append([0, len(sequences[c])])
 
     return success_f, seqfile, headers, sequences, headers_wpos, basepos
 
 
 def makeoutputdir(outdir):
-    """ Create output directory """
+    """Create output directory"""
     success = False
     try:
         os.mkdir(outdir)
         success = True
     except WindowsError as e:
-        if 'Error 183' in str(e):    # already existing
+        if "Error 183" in str(e):  # already existing
             print("Directory already existing.")
             success = True
-        elif 'Error 3' in str(e):    # directory does not exist
+        elif "Error 3" in str(e):  # directory does not exist
             try:
-                os.makedirs(outdir)     # create subdirectories
+                os.makedirs(outdir)  # create subdirectories
                 success = True
-            except:     # catch all exceptions
+            except:  # catch all exceptions
                 print("Could not create output directory. Try again.")
     return success
 
 
 def armlength(armlen):
-    """ Length of a padlock probe arm """
+    """Length of a padlock probe arm"""
     success = False
     if not armlen > 6:
         print("Padlock arm length too short. Should be at least 7. Try again")
@@ -87,7 +89,7 @@ def armlength(armlen):
 
 
 def spacing(interval):
-    """ Minimum distance between two targets """
+    """Minimum distance between two targets"""
     success = False
     if not interval >= 0:
         print("Spacing must be at least 0. Try again.")
@@ -97,7 +99,7 @@ def spacing(interval):
 
 
 def tmthreshold(t1, extreme):
-    """ Lower threshold for Tm screening """
+    """Lower threshold for Tm screening"""
     success = False
     if t1 < extreme:
         print("Threshold must be higher than " + str(extreme) + ". Try again.")
@@ -107,7 +109,7 @@ def tmthreshold(t1, extreme):
 
 
 def nprobes(n):
-    """ Fixed number of probes per gene """
+    """Fixed number of probes per gene"""
     success = False
     if not n >= 1:
         print("Fixed number of probes per gene must be at least 1. Try again.")
@@ -117,7 +119,7 @@ def nprobes(n):
 
 
 def getdesigninput():
-    """ Check all keyboard inputs and format target sequences """
+    """Check all keyboard inputs and format target sequences"""
     success_s = False  # species
     success_g = False  # gene acronyms
     success_f = False  # fasta file
@@ -132,11 +134,13 @@ def getdesigninput():
         species = input("Specify the species (human or mouse): ").lower()
         success_s = checkspecies(species)
 
-# if species in (["human", "mouse"]):
+    # if species in (["human", "mouse"]):
     # when human or mouse, possible to load only gene list
     while not success_g:
-        genefile = input("File containing gene acronyms (text/csv file with one gene per row, or with linker sequences).\n"
-                             "Just press Enter if input sequences can be provided:\n")
+        genefile = input(
+            "File containing gene acronyms (text/csv file with one gene per row, or with linker sequences).\n"
+            "Just press Enter if input sequences can be provided:\n"
+        )
         if len(genefile):
             genefile = correctinput(genefile)
             success_g, allgenes, alllinkers = readgenefile(genefile)
@@ -150,36 +154,43 @@ def getdesigninput():
             # genes = list(set(genes))
         else:
             success_g = True
-            success_f, seqfile, headers, sequences, headers_wpos, basepos = readseqfile()
-            toavoid = [':', '/', '\\', '[', ']', '?', '"', ' ', '<', '>']
+            (
+                success_f,
+                seqfile,
+                headers,
+                sequences,
+                headers_wpos,
+                basepos,
+            ) = readseqfile()
+            toavoid = [":", "/", "\\", "[", "]", "?", '"', " ", "<", ">"]
             genes = []
             linkers = []
             variants = []
             variants_matching_sequence = []
             for header in headers:
                 for i in toavoid:
-                    header = header.replace(i, '')
+                    header = header.replace(i, "")
                 genes.append(header)
                 linkers.append([])
                 variants.append([])
                 variants_matching_sequence.append([])
-# else:
-#     success_f, seqfile, headers, headers_wpos, sequences = readseqfile()
-#     basepos = []
-#     linkers = []
+    # else:
+    #     success_f, seqfile, headers, headers_wpos, sequences = readseqfile()
+    #     basepos = []
+    #     linkers = []
 
     while not success_d:
         outdir = input("Output directory: ")
         outdir = correctinput(outdir)
-        if outdir.find(' ') > -1:
+        if outdir.find(" ") > -1:
             print("No whitespace allowed in the directory path!")
         else:
             success_d = makeoutputdir(outdir)
 
     # create temporary output folder
     outdir_temp = createoutput.tempdir(outdir)
-    t = outdir_temp.split('TempFolder')[1]
-    os.mkdir(outdir_temp)
+    t = outdir_temp.split("TempFolder")[1]
+    os.makedirs(outdir_temp, exist_ok=True)
 
     while not success_a:
         armlen = input("Length of one padlock arm (nt): ")
@@ -190,13 +201,17 @@ def getdesigninput():
         success_i = spacing(int(interval))
 
     while not success_t:
-        t1 = input("The lower threshold for target Tm\n"
-                       "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): ")
+        t1 = input(
+            "The lower threshold for target Tm\n"
+            "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): "
+        )
         temp = tmthreshold(int(t1), 0)
         if temp:
             while not success_t:
-                t2 = input("The upper threshold for target Tm\n"
-                               "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): ")
+                t2 = input(
+                    "The upper threshold for target Tm\n"
+                    "(0.1 uM oligo conc., 0.075 M monovalent salt, 0.01 M bivalent salt, 20% formamide): "
+                )
                 success_t = tmthreshold(int(t2), int(t1))
 
     while not success_n:
@@ -206,7 +221,6 @@ def getdesigninput():
         else:
             success_n = True
 
-
     # find hits if no target sequence is given
     if not success_f:
         # find genes in the database
@@ -215,7 +229,9 @@ def getdesigninput():
         # if any gene is not found in the RefSeq acronym list, write to file
         nohit = [i for i in range(len(genes)) if len(hits[i]) == 0]
         if len(nohit):
-            with open(os.path.join(outdir, '0.AcronymNotFound_' + t + '.txt'), 'w') as f:
+            with open(
+                os.path.join(outdir, "0.AcronymNotFound_" + t + ".txt"), "w"
+            ) as f:
                 for i in nohit[::-1]:
                     f.write("%s\n" % genes[i])
                     del genes[i]  # remove genes that are not found
@@ -223,12 +239,16 @@ def getdesigninput():
                     del hits[i]
 
         # find sequences (MSA included if multiple variants)
-        headers, basepos, sequences, msa, nocommon, variants = retrieveseq.findseq(genes, hits, outdir_temp)
+        headers, basepos, sequences, msa, nocommon, variants = retrieveseq.findseq(
+            genes, hits, outdir_temp
+        )
 
         # genes that have no common sequence among all variants
         nocommon = [c for c, i in enumerate(genes) if i in nocommon]
         if len(nocommon):
-            with open(os.path.join(outdir, '0.NoConsensusSequence_' + t + '.txt'), 'w') as f:
+            with open(
+                os.path.join(outdir, "0.NoConsensusSequence_" + t + ".txt"), "w"
+            ) as f:
                 for i in nocommon[::-1]:
                     f.write("%s\n" % genes[i])
                     del genes[i]  # remove genes that are not found
@@ -253,21 +273,28 @@ def getdesigninput():
                     variants_matching_sequence.append(i)
 
         # write found sequences to output file
-        with open(os.path.join(outdir, '1.InputSeq_' + t + '.fasta'), 'w') as f:
+        with open(os.path.join(outdir, "1.InputSeq_" + t + ".fasta"), "w") as f:
             for i, base in enumerate(basepos):
                 if isinstance(base[0], int):  # no variants found
                     f.write("%s, %d to %d\n" % (headers[i], base[0] + 1, base[1] + 1))
                     f.write("%s\n\n" % sequences[i])
                 else:  # more than one variants found
                     for j, subbase in enumerate(base):
-                        f.write("%s, %d to %d\n" % (headers[i], subbase[0] + 1, subbase[1] + 1))
+                        f.write(
+                            "%s, %d to %d\n"
+                            % (headers[i], subbase[0] + 1, subbase[1] + 1)
+                        )
                         f.write("%s\n\n" % sequences[i][j])
-        temp = readfastafile.readfasta(os.path.join(outdir, '1.InputSeq_' + t + '.fasta'))
+        temp = readfastafile.readfasta(
+            os.path.join(outdir, "1.InputSeq_" + t + ".fasta")
+        )
         headers_wpos = temp[1]
         sequences = temp[2]
 
     # write an overview log file
-    with open(os.path.join(outdir, 'log_' + outdir_temp.split('TempFolder')[1] + '.txt'), 'w') as f:
+    with open(
+        os.path.join(outdir, "log_" + outdir_temp.split("TempFolder")[1] + ".txt"), "w"
+    ) as f:
         f.write("Multiple padlock design v1\nDate and time: %s\n" % outdir_temp[-14:])
         f.write("Species: %s\n" % species)
         f.write("Output directory: %s\n" % outdir)
@@ -278,26 +305,34 @@ def getdesigninput():
         if not success_f:
             f.write("Input file: %s\n" % genefile)
             f.write("Unique gene acronyms found: %d\n" % (len(genes) + len(nocommon)))
-            f.write("Number of genes not found in the corresponding database: %d\n" % len(nohit))
-            f.write("Number of genes with multiple sequence variants: %d\n"
-                    % len(msa))
-            f.write("Number of genes with no common sequence after multiple sequence alignment: %d\n"
-                    % len(nocommon))
+            f.write(
+                "Number of genes not found in the corresponding database: %d\n"
+                % len(nohit)
+            )
+            f.write("Number of genes with multiple sequence variants: %d\n" % len(msa))
+            f.write(
+                "Number of genes with no common sequence after multiple sequence alignment: %d\n"
+                % len(nocommon)
+            )
         else:
             f.write("Input file: %s\n" % seqfile)
-            f.write("Number of sequences processed from the input file: %d\n" % len(headers))
-    return (species, int(armlen), int(interval), int(t1), int(t2), n),\
-           (outdir, outdir_temp), \
-           (genes, linkers, headers, variants),\
-           (basepos, headers_wpos, sequences, variants_matching_sequence)
+            f.write(
+                "Number of sequences processed from the input file: %d\n" % len(headers)
+            )
+    return (
+        (species, int(armlen), int(interval), int(t1), int(t2), n),
+        (outdir, outdir_temp),
+        (genes, linkers, headers, variants),
+        (basepos, headers_wpos, sequences, variants_matching_sequence),
+    )
 
 
 def checkformat(headers):
-    fmt = 'NCBI'
+    fmt = "NCBI"
     c = 0
-    while fmt == 'NCBI' and c < len(headers):
-        if headers[c][:3] != '>gi' and headers[c][3] != '_':
-            fmt = 'Unknown'
+    while fmt == "NCBI" and c < len(headers):
+        if headers[c][:3] != ">gi" and headers[c][3] != "_":
+            fmt = "Unknown"
         else:
             c += 1
     return fmt
