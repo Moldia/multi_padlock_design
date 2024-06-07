@@ -10,7 +10,16 @@ funmap = []
 
 
 def readblastout(file, armlength, variants):
-    """Read the results from blast"""
+    """ Read the results from blast
+    
+    Args:
+        file: str, path to the blast output file
+        armlength: int, length of the arm
+        variants: list, list of variants to check for
+        
+    Returns:
+        specific: bool, True if the sequence is specific, False if not
+    """
     global funmap
     global notmapped
     specific = True
@@ -43,42 +52,46 @@ def readblastout(file, armlength, variants):
                         # remove the first empty column (somehow appears in some db and blast versions)
                         if "" in scores:
                             scores.remove("")
-
+                        # if more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
                         if (
-                            2 * armlength * 0.5 < int(scores[1]) < 2 * armlength
+                            armlength < int(scores[1])
                             and float(scores[0]) > 80
                             and int(scores[4]) < armlength - 4
                             and int(scores[5]) > armlength + 5
                         ):
-                            # more than 50% coverage, 80% homology, and non-target sequence covers ligation site +- 5
-                            specific = False
-
-                        if float(scores[0]) == 100 and int(scores[1]) == 2 * armlength:
-                            mappable = True
-                            if len(variants) and hit not in variants:
-                                if isinstance(variants, list):
-                                    with open(
-                                        os.path.join(
-                                            os.path.dirname(file), "homology.txt"
-                                        ),
-                                        "a",
-                                    ) as fsimilar:
-                                        fsimilar.write("%s,%s\n" % (hit, variants[0]))
+                            # First check if variants are provided
+                            if len(variants):
+                                # If they are and the hit is not in them, this is a non specific hit
+                                if hit not in variants:
+                                    if isinstance(variants, list):
+                                        with open(os.path.join(os.path.dirname(file), 'homology.txt'), 'a') as fsimilar:
+                                                fsimilar.write('%s,%s\n' % (hit, variants[0]))
+                                    else:
+                                        with open(os.path.join(os.path.dirname(file), 'homology.txt'), 'a') as fsimilar:
+                                                fsimilar.write('%s,%s\n' % (hit, variants))
+                                        specific = False
+                                # Otherwise, the hit is specific
                                 else:
-                                    with open(
-                                        os.path.join(
-                                            os.path.dirname(file), "homology.txt"
-                                        ),
-                                        "a",
-                                    ) as fsimilar:
-                                        fsimilar.write("%s,%s\n" % (hit, variants))
-                                specific = False
+                                    # And if it's a perfect match mark it as mappable
+                                    if float(scores[0]) == 100 and int(scores[1]) == 2*armlength:
+                                        mappable = True
+                            # If no variants are provided, check if the hit is the same as the input sequence
+                            else:
+                                import warnings
+                                warnings.warn('No gene variants searched for due to providing fasta input, \
+                                            only checking if blast hits are the same as the input sequence')
+                                if hit not in file.split('/')[-1]:
+                                    specific = False
+                                else:
+                                    if float(scores[0]) == 100 and int(scores[1]) == 2*armlength:
+                                        mappable = True
+        # unmappable sequences will later be removed from final results
         if not mappable:
-            with open(file[0:-10] + ".fasta", "r") as f:
+            with open(file[0:-10] + '.fasta', 'r') as f:
                 seq = f.readlines()
-                funmap.write("Could not map sequence in " + file[:-10] + "!\n")
+                funmap.write('Could not map sequence in ' + file[:-10] + '!\n')
                 funmap.write(seq[1])
-                notmapped.append(int(file[:-10].split("_")[-1]) - 1)
+                notmapped.append(int(file[:-10].split('_')[-1])-1)
 
     # if no blast results returned, ignore the sequence (can be due to error in blast+ or due to no similar sequence)
     if noblast:
@@ -88,7 +101,19 @@ def readblastout(file, armlength, variants):
 
 
 def getcandidates(listSiteChopped, headers, dirnames, armlength, accession):
-    """Get specific fragments"""
+    """ Get the candidates for the probes
+
+    Args:
+        listSiteChopped (list): list of sites
+        headers (list): list of headers
+        dirnames (list): list of directories
+        armlength (int): arm length
+        accession (list): list of accession numbers
+
+    Returns:
+        siteCandidates (list): list of candidates
+        notMapped (list): list of not mapped sites
+    """  
     global notmapped
     global funmap
     siteCandidates = []
@@ -151,7 +176,7 @@ def getcandidates(listSiteChopped, headers, dirnames, armlength, accession):
                     else:
                         idxPairStart = np.add(idxPairStart, 1)
 
-                    idxPairEnd = np.zeros(len(idxPairStart), dtype=np.int)
+                    idxPairEnd = np.zeros(len(idxPairStart), dtype=int)
                     for j in range(len(idxPairStart) - 1):
                         p = idxPairStart[j]
                         c = 0
