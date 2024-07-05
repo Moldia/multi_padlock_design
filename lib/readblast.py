@@ -69,7 +69,7 @@ def readblastout(file, armlength, variants):
                                     else:
                                         with open(os.path.join(os.path.dirname(file), 'homology.txt'), 'a') as fsimilar:
                                                 fsimilar.write('%s,%s\n' % (hit, variants))
-                                        specific = False
+                                    specific = False
                                 # Otherwise, the hit is specific
                                 else:
                                     # And if it's a perfect match mark it as mappable
